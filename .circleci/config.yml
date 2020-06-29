@@ -14,6 +14,17 @@ jobs:
       - run:
           name: Build
           command: npm run build
+  bump-version:
+    docker:
+      - image: circleci/node:13
+    steps:
+      - checkout
+      - run:
+          name: Patch version
+          command: npm version patch
+      - run:
+          name: Commit version change
+          command: git push -m "Bump patch version"
   # semantic_release:
   #   docker:
   #     - image: circleci/node:12.9.0
@@ -31,10 +42,9 @@ workflows:
   test:
     jobs:
       - test-and-build
-      # TBD: add semantic release
-      # - semantic_release:
-      #     requires:
-      #       - build-and-test
-      #     filters:
-      #       branches:
-      #         only: next
+      - bump-version:
+          requires:
+            - test-and-build
+          filters:
+            branches:
+              only: develop
