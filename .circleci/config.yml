@@ -27,7 +27,7 @@ jobs:
           command: |
               git config --global user.email circleci@circleci
               git config --global user.name CircleCI
-              npm version patch
+              npm version patch -m "[skip ci]"
       - run:
           name: Commit version change
           command: git push
@@ -53,4 +53,4 @@ workflows:
           #  - test-and-build
           filters:
             branches:
-              only: develop
+              only: master
