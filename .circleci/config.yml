@@ -1,17 +1,40 @@
 version: 2.1
-orbs:
-  node: circleci/node@1.1.6
 jobs:
-  build-and-test:
-    executor:
-      name: node/default
+  test-and-build:
+    docker:
+      - image: circleci/node:13
     steps:
       - checkout
-      - node/with-cache:
-          steps:
-            - run: npm install
-            - run: npm test
+      - run:
+          name: Install
+          command: npm install
+      - run:
+          name: Test
+          command: npm run test
+      - run:
+          name: Build
+          command: npm run build
+  # semantic_release:
+  #   docker:
+  #     - image: circleci/node:12.9.0
+  #   steps:
+  #     - checkout
+  #     - run:
+  #         name: Install 'semantic-release' modules
+  #         command: npm i --no-save semantic-release-cli @semantic-release/changelog @semantic-release/commit-analyzer @semantic-release/git @semantic-release/github @semantic-release/npm @semantic-release/release-notes-generator
+  #     - run:
+  #         name: Run 'semantic-release'
+  #         command: npx semantic-release
+
 workflows:
-    build-and-test:
-      jobs:
-        - build-and-test
+  version: 2
+  test:
+    jobs:
+      - test-and-build
+      # TBD: add semantic release
+      # - semantic_release:
+      #     requires:
+      #       - build-and-test
+      #     filters:
+      #       branches:
+      #         only: next
