@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "citest": "git add . && git commit --amend -m 'Fix circleci config' && git push -f",
     "clean": "rimraf build && rimraf bundle",
     "deploy": "viewar-cli deploy",
     "build": "npm run clean && webpack -p --progress --mode production --env production",
