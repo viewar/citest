@@ -1,0 +1,58 @@
+version: 2.1
+jobs:
+  test-and-build:
+    docker:
+      - image: circleci/node:13
+    steps:
+      - checkout
+      - run:
+          name: Install
+          command: npm install
+      - run:
+          name: Test
+          command: npm run test
+      - run:
+          name: Build
+          command: npm run build
+  bump-version:
+    docker:
+      - image: circleci/node:13
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints:
+              - "84:d0:f9:41:f8:ec:21:cb:33:3a:6d:89:e8:3f:55:83"
+      - run:
+          name: Patch version
+          command: |
+              git config --global user.email circleci@circleci
+              git config --global user.name CircleCI
+              npm version patch -m "v%s [skip ci]"
+      - run:
+          name: Commit version change
+          command: |
+              git push
+              git push --tags 
+  # semantic_release:
+  #   docker:
+  #     - image: circleci/node:12.9.0
+  #   steps:
+  #     - checkout
+  #     - run:
+  #         name: Install 'semantic-release' modules
+  #         command: npm i --no-save semantic-release-cli @semantic-release/changelog @semantic-release/commit-analyzer @semantic-release/git @semantic-release/github @semantic-release/npm @semantic-release/release-notes-generator
+  #     - run:
+  #         name: Run 'semantic-release'
+  #         command: npx semantic-release
+
+workflows:
+  version: 2
+  test:
+    jobs:
+      - test-and-build
+      - bump-version:
+          requires:
+           - test-and-build
+          filters:
+            branches:
+              only: develop
