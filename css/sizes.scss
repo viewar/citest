@@ -1,0 +1,24 @@
+$sizes: (
+  0: 0.5em,
+  1: 1em,
+  2: 2em,
+  3: 4em,
+  4: 6em,
+  5: 8em,
+);
+
+@function size($size: 0) {
+  @return map-get($sizes, $size);
+}
+
+$fontSizes: (
+  0: 0.8em,
+  1: 0.9em,
+  2: 1em,
+  3: 1.1em,
+  4: 1.3em,
+);
+
+@function fontSize($size: 0) {
+  @return map-get($fontSizes, $size);
+}

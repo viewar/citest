@@ -1,0 +1,59 @@
+@import "~normalize.css";
+@import "css/colors.scss";
+@import url("https://fonts.googleapis.com/css?family=Montserrat:200,300,400,500,600,700&display=swap");
+
+html {
+  min-height: 100vh;
+}
+
+body {
+  font-family: "Montserrat", Regular;
+  font-size: 14px;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  padding: 0;
+  position: fixed;
+  width: 100%;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+a,
+a:visited,
+a:hover {
+  color: color("brand", "primary");
+}
+
+img {
+  border-style: initial;
+}
+
+button,
+input[type="button"],
+input[type="submit"] {
+  outline: none;
+  background: inherit;
+  margin: 0;
+  padding: 0;
+  border: 0;
+
+  &:focus {
+    outline: none;
+    border: 0;
+  }
+}
+
+:global {
+  #app {
+    margin: 0;
+  }
+}
+
+.OverlayBackgroundColor {
+  background-color: transparentize(color("brand", "secondary"), 0.3);
+}

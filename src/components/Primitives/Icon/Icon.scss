@@ -1,0 +1,48 @@
+@import "css/colors.scss";
+@import "css/sizes.scss";
+
+.Icon {
+  flex: 0 0 auto; /* Do not squash or squeeze icons! */
+  vertical-align: text-bottom; /* Do not add space below the icon */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+.variant-dark {
+  fill: color("background", "inverted");
+  color: color("background", "inverted");
+}
+
+.variant-default {
+  fill: color("background");
+  color: color("background");
+}
+
+.variant-filled {
+  fill: color("background", "inverted");
+  color: transparent;
+  background-color: color("background");
+}
+
+.is-disabled {
+  fill: color("disabled");
+  color: color("disabled");
+}
+
+.size-small {
+  height: 24px;
+  width: 24px;
+}
+
+.size-default {
+  border: 2px solid;
+  border-radius: 50%;
+  height: 50px;
+  width: 50px;
+}
+
+.variant-gallery-close {
+  margin-right: 12px;
+}

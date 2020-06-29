@@ -1,0 +1,193 @@
+{
+  "scene": {
+    "controlPoints": {
+      "a": {
+        "id": "a",
+        "x": -300,
+        "y": -300
+      },
+      "b": {
+        "id": "b",
+        "x": 510,
+        "y": -330
+      },
+      "c": {
+        "id": "c",
+        "x": 300,
+        "y": 300
+      },
+      "d": {
+        "id": "d",
+        "x": -120,
+        "y": 80
+      }
+    },
+    "walls": {
+      "l6pic8nq6adjmssj": {
+        "points": ["a", "b"],
+        "objects": [
+          {
+            "id": "wvtjreuorobzp6sc",
+            "type": "wall",
+            "length": 278.5141283532308,
+            "wall": null,
+            "point": {
+              "x": 0,
+              "y": 0
+            },
+            "attached": true,
+            "displayLength": 278.5141283532308
+          },
+          {
+            "id": "e4q3g4o709x30bbx",
+            "model": {
+              "id": "39919",
+              "imageUrl": "https://api.viewar.com/model/downloadImage/display:1/size:large/id:39919"
+            },
+            "type": "door",
+            "length": 104,
+            "height": 220,
+            "width": 17.2134342194,
+            "verticalOffset": 80,
+            "mirrored": 0,
+            "rotated": 1,
+            "wall": null,
+            "point": {
+              "x": 40,
+              "y": -340
+            },
+            "attached": true,
+            "displayLength": 104,
+            "displayHeight": 220,
+            "displayVerticalOffset": 80
+          },
+          {
+            "id": "ys0ohcurglcx14q4",
+            "type": "wall",
+            "length": 428.041236813147,
+            "wall": null,
+            "point": {
+              "x": 0,
+              "y": 0
+            },
+            "attached": true,
+            "displayLength": 428.041236813147
+          }
+        ],
+        "height": 250,
+        "materials": {}
+      },
+      "z0dp7dzelic0gok8": {
+        "points": ["b", "c"],
+        "objects": [
+          {
+            "id": "3rzkiglpcqoru3b2",
+            "type": "wall",
+            "length": 184.00854685246009,
+            "wall": null,
+            "point": {
+              "x": 0,
+              "y": 0
+            },
+            "attached": true,
+            "displayLength": 184.00854685246009
+          },
+          {
+            "id": "8m9e9aoljha17jai",
+            "model": {
+              "id": "50402",
+              "imageUrl": "https://api.viewar.com/model/downloadImage/display:1/size:large/id:50402"
+            },
+            "type": "window",
+            "length": 100,
+            "height": 121,
+            "width": 33.37191772460938,
+            "verticalOffset": 80,
+            "mirrored": 0,
+            "rotated": 1,
+            "wall": null,
+            "point": {
+              "x": 460,
+              "y": -100
+            },
+            "attached": true,
+            "displayLength": 100,
+            "displayHeight": 121,
+            "displayVerticalOffset": 80
+          },
+          {
+            "id": "o4yyzfx2wsg340gu",
+            "type": "wall",
+            "length": 380.06976178289966,
+            "wall": null,
+            "point": {
+              "x": 0,
+              "y": 0
+            },
+            "attached": true,
+            "displayLength": 380.06976178289966
+          }
+        ],
+        "height": 250,
+        "materials": {}
+      },
+      "ol7350gd0j1hq1cu": {
+        "points": ["c", "d"],
+        "objects": [
+          {
+            "id": "#",
+            "type": "wall",
+            "length": 474.13078364518793,
+            "wall": null,
+            "point": {
+              "x": 0,
+              "y": 0
+            },
+            "attached": true,
+            "displayLength": 474.13078364518793
+          }
+        ],
+        "height": 250,
+        "materials": {}
+      },
+      "scvw6wnaoy1lnhy8": {
+        "points": ["d", "a"],
+        "objects": [
+          {
+            "id": "#",
+            "type": "wall",
+            "length": 420.47592083257274,
+            "wall": null,
+            "point": {
+              "x": 0,
+              "y": 0
+            },
+            "attached": true,
+            "displayLength": 420.47592083257274
+          }
+        ],
+        "height": 250,
+        "materials": {}
+      }
+    },
+    "rooms": {
+      "lejb9bf12enmvx20": {
+        "points": ["a", "b", "c", "d"],
+        "data": {
+          "color": "hsl(222.62466952695, 100%, 90%)"
+        }
+      }
+    }
+  },
+  "background": {
+    "src": "",
+    "position": {
+      "x": 0,
+      "y": 0
+    },
+    "transformVector": {
+      "x": 1,
+      "y": 0
+    }
+  }
+}

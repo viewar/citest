@@ -1,0 +1,22 @@
+$colors: (
+  grey: (
+    dark: #444,
+    base: #666,
+    light: #999,
+  ),
+  brand: (
+    primary: #ad1917,
+    secondary: #6c6c6c,
+  ),
+  background: (
+    base: rgb(245, 245, 245),
+    inverted: #807f7f,
+  ),
+  disabled: (
+    base: #807f7f,
+  ),
+);
+
+@function color($color, $variant: "base") {
+  @return map-get(map-get($colors, $color), $variant);
+}

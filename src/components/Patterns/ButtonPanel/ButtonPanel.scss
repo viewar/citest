@@ -1,0 +1,74 @@
+@import "css/colors.scss";
+
+.FieldWrapper {
+  // height: 50vh;
+  bottom: 21px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  left: 18px;
+  position: absolute;
+  transition: transform 0.15s;
+}
+.ButtonWrapper {
+  align-items: center;
+  display: flex;
+  opacity: 0;
+  padding: 5.5px 0;
+  pointer-events: none;
+  transform: translateY(100%);
+  transition: opacity 0.2s, transform 0.2s;
+  user-select: none;
+  background: transparent;
+  border: none;
+
+  &:disabled {
+    .ButtonText {
+      color: color("background", "inverted");
+    }
+  }
+
+  img {
+    pointer-events: none;
+    height: 30px;
+    width: 30px;
+  }
+
+  &.ActiveWrapper {
+    pointer-events: initial;
+  }
+
+  .ButtonText {
+    color: white;
+    font-family: Montserrat;
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 12px;
+    margin-left: 6px;
+    text-transform: uppercase;
+
+    &.variant-dark {
+      color: black;
+    }
+  }
+
+  &.BaseButtonWrapper {
+    opacity: 1;
+    pointer-events: initial;
+    transform: translateY(0);
+    padding: 0;
+    padding-top: 5.5px;
+
+    .ButtonText {
+      font-size: 12px;
+      line-height: 20px;
+      letter-spacing: 0.14px;
+      margin-left: 9px;
+      max-width: 60vw;
+    }
+  }
+}
+
+.Button {
+  border-radius: 50%;
+}

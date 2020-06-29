@@ -1,0 +1,32 @@
+@import "css/colors.scss";
+
+.GalleryContainer {
+  align-items: center;
+  background-color: #f5f5f5;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 3em 0em 1em;
+  position: relative;
+  transition: transform 0.15s;
+  width: 100%;
+}
+
+.SearchInputWrapper {
+  align-items: center;
+  box-sizing: border-box;
+  display: flex;
+  margin-bottom: 0.8em;
+  width: 95%;
+  height: 50px;
+}
+
+.CategoriesWrapper {
+  align-self: flex-start;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: scroll;
+  width: 100%;
+}

@@ -1,0 +1,12 @@
+$logo-height: 20vw;
+
+.Logo {
+  background: bottom / contain no-repeat;
+  background-image: url("~assets/images/viewar_logo.svg");
+
+  position: absolute;
+  bottom: 21px;
+  right: 18px;
+  height: $logo-height;
+  width: $logo-height;
+}

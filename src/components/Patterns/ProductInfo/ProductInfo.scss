@@ -1,0 +1,76 @@
+@import "css/colors.scss";
+
+.ProductInfoContainer {
+  align-items: center;
+  background-color: white;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding-top: 40px;
+  padding: 32px;
+  position: relative;
+  transition: transform 0.15s;
+  width: 100%;
+
+  .ToggleView {
+    height: 24px;
+    left: 18px;
+    position: absolute;
+    top: 40px;
+    width: 24px;
+  }
+
+  .ProductInfoUpper,
+  .ProductInfoLower {
+    align-items: flex-start;
+    display: flex;
+    flex-direction: column;
+    padding: 40px 0;
+    width: 100%;
+  }
+
+  .Title {
+    color: #807f7f;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12px;
+    line-height: 13px;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+  }
+
+  .Name {
+    color: #262f3a;
+    font-family: Montserrat, Semi-Bold;
+    font-size: 17px;
+    letter-spacing: 0.2px;
+    line-height: 20px;
+  }
+
+  .Price {
+    color: #262f3a;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 0.22px;
+    line-height: 19px;
+    margin-top: 10px;
+  }
+
+  .PerSt {
+    color: #707070;
+    font-size: 16px;
+    letter-spacing: 0.19px;
+  }
+
+  .ProductInfoLower {
+    border-top: 1px solid #b4b4b4;
+
+    p {
+      color: #262f3a;
+      font-size: 12px;
+      line-height: 16px;
+      margin: 0;
+    }
+  }
+}
