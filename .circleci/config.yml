@@ -20,13 +20,13 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Patch version
+          name: Patch version & create version commit
           command: |
               git config --global user.email circleci@circleci
               git config --global user.name CircleCI
               npm version patch -m "v%s [skip ci]"
       - run:
-          name: Commit version change
+          name: Push changes
           command: |
               git push
               git push --tags 
