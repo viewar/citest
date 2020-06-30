@@ -30,6 +30,20 @@ jobs:
           command: |
               git push
               git push --tags 
+  deploy:
+    docker:
+      - image: circleci/node:13
+    steps:
+      - checkout
+      - run:
+          name: Install
+          command: npm install
+      - run:
+          name: Install @viewar/cli
+          command: sudo npm install -g @viewar/cli
+      - run:
+          name: Deploy
+          command: viewar-cli deploy com.viewar.citest 20.0.0
 workflows:
   version: 2
   test:
@@ -38,6 +52,12 @@ workflows:
       - bump-version:
           requires:
            - test-and-build
+          filters:
+            branches:
+              only: develop
+      - deploy:
+          requires:
+           - bump-version
           filters:
             branches:
               only: develop
