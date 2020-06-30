@@ -1,35 +1,35 @@
 version: 2.1
 jobs:
-  # test-and-build:
-  #   docker:
-  #     - image: circleci/node:13
-  #   steps:
-  #     - checkout
-  #     - run:
-  #         name: Install
-  #         command: npm install
-  #     - run:
-  #         name: Test
-  #         command: npm run test
-  #     - run:
-  #         name: Build
-  #         command: npm run build
-  # bump-version:
-  #   docker:
-  #     - image: circleci/node:13
-  #   steps:
-  #     - checkout
-  #     - run:
-  #         name: Patch version & create version commit
-  #         command: |
-  #             git config --global user.email circleci@circleci
-  #             git config --global user.name CircleCI
-  #             npm version patch -m "v%s [skip ci]"
-  #     - run:
-  #         name: Push changes
-  #         command: |
-  #             git push
-  #             git push --tags 
+  test-and-build:
+    docker:
+      - image: circleci/node:13
+    steps:
+      - checkout
+      - run:
+          name: Install
+          command: npm install
+      - run:
+          name: Test
+          command: npm run test
+      - run:
+          name: Build
+          command: npm run build
+  bump-version:
+    docker:
+      - image: circleci/node:13
+    steps:
+      - checkout
+      - run:
+          name: Patch version & create version commit
+          command: |
+              git config --global user.email circleci@circleci
+              git config --global user.name CircleCI
+              npm version patch -m "v%s [skip ci]"
+      - run:
+          name: Push changes
+          command: |
+              git push
+              git push --tags 
   deploy:
     docker:
       - image: circleci/node:13
@@ -44,25 +44,22 @@ jobs:
               # TODO: Use viewar-config.json as fallback? 
               APP_VERSION="$(cat package.json | npx json version)"
               APP_ID="$(cat .viewar-config | npx json appId)"
-              echo $APP_VERSION
-              echo $APP_ID
               echo "{ \"users\": { \"$USER_ID\": { \"id\": \"$USER_ID\", \"name\": \"CircleCI\", \"email\": \"$USER_NAME\", \"token\": \"$USER_TOKEN\" } } }" > ~/.viewar-cli
-              tail ~/.viewar-cli
               npx @viewar/cli deploy $APP_ID $APP_VERSION
 workflows:
   version: 2
   test:
     jobs:
-      # - test-and-build
-      # - bump-version:
-      #     requires:
-      #      - test-and-build
-      #     filters:
-      #       branches:
-      #         only: develop
+      - test-and-build
+      - bump-version:
+          requires:
+           - test-and-build
+          filters:
+            branches:
+              only: develop
       - deploy:
-      #     requires:
-      #      - bump-version
+          requires:
+           - bump-version
           filters:
             branches:
               only: develop
