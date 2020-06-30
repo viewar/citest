@@ -39,11 +39,14 @@ jobs:
           name: Install
           command: npm install
       - run:
+          name: Patch version & create version commit
+          command: |
+              npm --no-git-tag-version version patch
+      - run:
           name: Deploy
           command: |
-              # TODO: Use viewar-config.json as fallback? 
               APP_VERSION="$(cat package.json | npx json version)"
-              APP_ID="$(cat .viewar-config | npx json appId)"
+              APP_ID="$((cat viewar-config.json || cat .viewar-config) | npx json appId)"
               echo "{ \"users\": { \"$USER_ID\": { \"id\": \"$USER_ID\", \"name\": \"CircleCI\", \"email\": \"$USER_NAME\", \"token\": \"$USER_TOKEN\" } } }" > ~/.viewar-cli
               npx @viewar/cli deploy $APP_ID $APP_VERSION
 workflows:
