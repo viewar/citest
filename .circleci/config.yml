@@ -14,23 +14,7 @@ jobs:
       - run:
           name: Build
           command: npm run build
-  bump-version:
-    docker:
-      - image: circleci/node:13
-    steps:
-      - checkout
-      - run:
-          name: Patch version & create version commit
-          command: |
-              git config --global user.email circleci@circleci
-              git config --global user.name CircleCI
-              npm version patch -m "v%s [skip ci]"
-      - run:
-          name: Push changes
-          command: |
-              git push
-              git push --tags 
-  deploy:
+  test-bumpversion-and-deploy:
     docker:
       - image: circleci/node:13
     steps:
@@ -39,30 +23,40 @@ jobs:
           name: Install
           command: npm install
       - run:
+          name: Test
+          command: npm run test
+      - run:
+          name: Build
+          command: npm run build
+      - run:
           name: Patch version & create version commit
           command: |
-              npm --no-git-tag-version version patch
+              git checkout .
+              git config --global user.email circleci@circleci
+              git config --global user.name CircleCI
+              npm version patch -m "v%s [skip ci]"
+      - run:
+          name: Push changes
+          command: |
+              git push
+              git push --tags 
       - run:
           name: Deploy
           command: |
               APP_VERSION="$(cat package.json | npx json version)"
               APP_ID="$((cat viewar-config.json || cat .viewar-config) | npx json appId)"
-              echo "{ \"users\": { \"$USER_ID\": { \"id\": \"$USER_ID\", \"name\": \"CircleCI\", \"email\": \"$USER_NAME\", \"token\": \"$USER_TOKEN\" } } }" > ~/.viewar-cli
+              # echo "{ \"users\": { \"$USER_ID\": { \"id\": \"$USER_ID\", \"name\": \"CircleCI\", \"email\": \"$USER_NAME\", \"token\": \"$USER_TOKEN\" } } }" > ~/.viewar-cli
+              echo $USER_PASSWORD | npx @viewar/cli login $USER_NAME
               npx @viewar/cli deploy $APP_ID.dev $APP_VERSION
 workflows:
   version: 2
   test:
     jobs:
-      - test-and-build
-      - bump-version:
-          requires:
-           - test-and-build
+      - test-and-build:
           filters:
             branches:
-              only: develop
-      - deploy:
-          requires:
-           - bump-version
+              ignore: develop
+      - test-bumpversion-and-deploy:
           filters:
             branches:
               only: develop
