@@ -7,9 +7,10 @@ jobs:
     steps:
       - checkout
       - restore_cache:
+          name: Restore NPM Package Cache
           keys:
-            - m2-{{ checksum "package.json" }}
-            - m2-
+            - m2-npm-packages-{{ checksum "package.json" }}
+            - m2-npm-packages-
       - run:
           name: Install
           command: npm install
@@ -19,6 +20,11 @@ jobs:
       - run:
           name: Build
           command: npm run build
+      - save_cache:
+          name: Save NPM Package Cache
+          key: m2-npm-packages-{{ checksum "package.json" }}
+          paths:
+            - ./node_modules/
   # Test and build, bump version number & deploy to a new configuration entry.
   test-build-bumpversion-and-deploy:
     docker:
@@ -26,9 +32,10 @@ jobs:
     steps:
       - checkout
       - restore_cache:
+          name: Restore NPM Package Cache
           keys:
-            - m2-{{ checksum "package.json" }}
-            - m2-
+            - m2-npm-packages-{{ checksum "package.json" }}
+            - m2-npm-packages-
       - run:
           name: Install
           command: npm install
@@ -62,6 +69,11 @@ jobs:
               echo $USER_PASSWORD | npx @viewar/cli login $USER_NAME
               # Deploy
               npx @viewar/cli deploy $APP_ID.dev $APP_VERSION
+      - save_cache:
+          name: Save NPM Package Cache
+          key: m2-npm-packages-{{ checksum "package.json" }}
+          paths:
+            - ./node_modules/
 workflows:
   version: 2
   test:
