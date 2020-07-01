@@ -1,10 +1,15 @@
 version: 2.1
 jobs:
+  # Test and build for every commit (except on develop branch).
   test-and-build:
     docker:
       - image: circleci/node:13
     steps:
       - checkout
+      - restore_cache:
+          keys:
+            - m2-{{ checksum "package.json" }}
+            - m2-
       - run:
           name: Install
           command: npm install
@@ -14,11 +19,16 @@ jobs:
       - run:
           name: Build
           command: npm run build
+  # Test and build, bump version number & deploy to a new configuration entry.
   test-build-bumpversion-and-deploy:
     docker:
       - image: circleci/node:13
     steps:
       - checkout
+      - restore_cache:
+          keys:
+            - m2-{{ checksum "package.json" }}
+            - m2-
       - run:
           name: Install
           command: npm install
@@ -31,7 +41,9 @@ jobs:
       - run:
           name: Patch version & create version commit
           command: |
+              # Make sure directory is clean after test & build.
               git checkout .
+              # Bump patch version.
               git config --global user.email circleci@circleci
               git config --global user.name CircleCI
               npm version patch -m "v%s [skip ci]"
@@ -43,10 +55,12 @@ jobs:
       - run:
           name: Deploy
           command: |
+              # Read app version/id from package.json/viewar-config
               APP_VERSION="$(cat package.json | npx json version)"
               APP_ID="$((cat viewar-config.json || cat .viewar-config) | npx json appId)"
-              # echo "{ \"users\": { \"$USER_ID\": { \"id\": \"$USER_ID\", \"name\": \"CircleCI\", \"email\": \"$USER_NAME\", \"token\": \"$USER_TOKEN\" } } }" > ~/.viewar-cli
+              # Login
               echo $USER_PASSWORD | npx @viewar/cli login $USER_NAME
+              # Deploy
               npx @viewar/cli deploy $APP_ID.dev $APP_VERSION
 workflows:
   version: 2
