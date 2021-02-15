@@ -126,11 +126,17 @@ workflows:
               only: develop
       - deploy:
           stage: ".test"
+          requires:
+            - test
+            - build
           filters:
             branches:
               only: test
       - deploy:
           stage: ""
+          requires:
+            - test
+            - build
           filters:
             branches:
               only: master
