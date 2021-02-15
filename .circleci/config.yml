@@ -127,14 +127,16 @@ workflows:
       - deploy:
           stage: ".test"
           requires:
-            - bump-version
+            - test
+            - build
           filters:
             branches:
               only: test
       - deploy:
           stage: ""
           requires:
-            - bump-version
+            - test
+            - build
           filters:
             branches:
               only: master
