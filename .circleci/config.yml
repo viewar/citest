@@ -1,50 +1,66 @@
 version: 2.1
-jobs:
-  # Test and build for every commit (except on develop branch).
-  test-and-build:
-    docker:
-      - image: circleci/node:13
+commands:
+  # Create cache for package.json ignoring the version number.
+  cached_npm_install:
     steps:
-      - checkout
+      - run:
+          name: Create package-caching.json (without version)
+          command: cat package.json | npx json -e 'delete this.version' > package.caching.json
       - restore_cache:
           name: Restore NPM Package Cache
           keys:
-            - m2-npm-packages-{{ checksum "package.json" }}
+            - m2-npm-packages-{{ checksum "package.caching.json" }}
             - m2-npm-packages-
       - run:
           name: Install
-          command: npm install
-      - run:
-          name: Test
-          command: npm run test
-      - run:
-          name: Build
-          command: npm run build
+          command: |
+            if [ ! -d node_modules ]; then
+              npm ci
+            fi
       - save_cache:
           name: Save NPM Package Cache
-          key: m2-npm-packages-{{ checksum "package.json" }}
+          key: m2-npm-packages-{{ checksum "package.caching.json" }}
           paths:
             - ./node_modules/
-  # Test and build, bump version number & deploy to a new configuration entry.
-  test-build-bumpversion-and-deploy:
+      - run:
+          name: Remove package-caching.json
+          command: rm package.caching.json
+jobs:
+  # Checkout code and do npm install.
+  checkout-and-install:
+      docker:
+        - image: circleci/node:13
+      steps:
+        - checkout
+        - cached_npm_install
+  # Test for every commit.
+  test:
+    docker:
+      - image: circleci/node:13
+    parallelism: 2
+    steps:
+      - checkout
+      - cached_npm_install
+      - run:
+          name: Test
+          command: npm run test
+  # Build every commit.
+  build:
+    docker:
+      - image: circleci/node:13
+    parallelism: 2
+    steps:
+      - checkout
+      - cached_npm_install
+      - run:
+          name: Test
+          command: npm run test
+  # Bump patch version number (develop only).
+  bump-version:
     docker:
       - image: circleci/node:13
     steps:
       - checkout
-      - restore_cache:
-          name: Restore NPM Package Cache
-          keys:
-            - m2-npm-packages-{{ checksum "package.json" }}
-            - m2-npm-packages-
-      - run:
-          name: Install
-          command: npm install
-      - run:
-          name: Test
-          command: npm run test
-      - run:
-          name: Build
-          command: npm run build
       - run:
           name: Patch version & create version commit
           command: |
@@ -53,12 +69,24 @@ jobs:
               # Bump patch version.
               git config --global user.email circleci@circleci
               git config --global user.name CircleCI
-              npm version patch -m "v%s [skip ci]"
+              LAST_COMMIT_MESSAGE="$(git log -1  --pretty='%s')"
+              npm version patch -m "v%s ($LAST_COMMIT_MESSAGE) [skip ci]"
       - run:
           name: Push changes
           command: |
               git push
-              git push --tags 
+              git push --tags
+  # Deploy to respective apps with postfix (.dev, .test or nothing).
+  deploy:
+    docker:
+      - image: circleci/node:13
+    parameters:
+      stage:
+        default: ""
+        description: The stage where this deployment goes to. Must be one of ".dev", ".test", "".
+        type: enum
+        enum: [".dev", ".test", ""]
+    steps:
       - run:
           name: Deploy
           command: |
@@ -68,21 +96,43 @@ jobs:
               # Login
               echo $USER_PASSWORD | npx @viewar/cli login $USER_NAME
               # Deploy
-              npx @viewar/cli deploy $APP_ID.dev $APP_VERSION
-      - save_cache:
-          name: Save NPM Package Cache
-          key: m2-npm-packages-{{ checksum "package.json" }}
-          paths:
-            - ./node_modules/
+              npx @viewar/cli deploy $APP_ID<< parameters.stage >> $APP_VERSION
 workflows:
   version: 2
   test:
     jobs:
-      - test-and-build:
-          filters:
-            branches:
-              ignore: develop
-      - test-build-bumpversion-and-deploy:
+      - checkout-and-install
+      - test:
+          requires:
+            - checkout-and-install
+      - build:
+          requires:
+            - checkout-and-install
+      - bump-version:
+          requires:
+            - test
+            - build
           filters:
             branches:
               only: develop
+      - deploy:
+          stage: ".dev"
+          requires:
+            - bump-version
+          filters:
+            branches:
+              only: develop
+      - deploy:
+          stage: ".test"
+          requires:
+            - bump-version
+          filters:
+            branches:
+              only: test
+      - deploy:
+          stage: ""
+          requires:
+            - bump-version
+          filters:
+            branches:
+              only: master
