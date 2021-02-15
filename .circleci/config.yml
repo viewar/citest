@@ -126,15 +126,11 @@ workflows:
               only: develop
       - deploy:
           stage: ".test"
-          requires:
-            - bump-version
           filters:
             branches:
               only: test
       - deploy:
           stage: ""
-          requires:
-            - bump-version
           filters:
             branches:
               only: master
