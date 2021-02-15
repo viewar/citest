@@ -87,6 +87,8 @@ jobs:
         type: enum
         enum: [".dev", ".test", ""]
     steps:
+      - checkout
+      - cached_npm_install
       - run:
           name: Deploy
           command: |
