@@ -13,7 +13,7 @@ async function init() {
   const render = () => {
     ReactDOM.render(
       <>
-        Hello World! 7
+        Hello World! 8
       </>,
       rootElement,
     );
