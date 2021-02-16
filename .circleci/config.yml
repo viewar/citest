@@ -98,7 +98,7 @@ jobs:
               # Login
               echo $USER_PASSWORD | npx @viewar/cli login $USER_NAME
               # Deploy
-              npx @viewar/cli deploy $APP_ID<< parameters.stage >> $APP_VERSION -f
+              npx @viewar/cli deploy $APP_ID<< parameters.stage >> $APP_VERSION
 workflows:
   version: 2
   test:
@@ -127,8 +127,7 @@ workflows:
       - deploy:
           stage: ".test"
           requires:
-            - test
-            - build
+            - bump-version
           filters:
             branches:
               only: test
