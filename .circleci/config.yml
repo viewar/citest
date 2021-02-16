@@ -74,7 +74,7 @@ jobs:
       - run:
           name: Push changes
           command: |
-              git push
+              git push --set-upstream origin ${CIRCLE_BRANCH}
               git push --tags
   # Deploy to respective apps with postfix (.dev, .test or nothing).
   deploy:
@@ -116,7 +116,9 @@ workflows:
             - build
           filters:
             branches:
-              only: develop
+              only: 
+                - develop
+                - test
       - deploy:
           stage: ".dev"
           requires:
@@ -134,7 +136,8 @@ workflows:
       - deploy:
           stage: ""
           requires:
-            - bump-version
+            - test
+            - build
           filters:
             branches:
               only: master
