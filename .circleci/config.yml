@@ -55,10 +55,16 @@ jobs:
       - run:
           name: Test
           command: npm run test
-  # Bump patch version number (develop only).
-  bump-version:
+  # Bump patch version number and deploy to respective apps with postfix (com.viewar.appname.dev or com.viewar.appname.test).
+  bump-version-and-deploy:
     docker:
       - image: circleci/node:13
+    parameters:
+      stage:
+        default: "dev"
+        description: The stage where this deployment goes to. Must be one of "dev" or "test".
+        type: enum
+        enum: ["dev", "test"]
     steps:
       - checkout
       - run:
@@ -76,16 +82,20 @@ jobs:
           command: |
               git push --set-upstream origin ${CIRCLE_BRANCH}
               git push --tags
-  # Deploy to respective apps with postfix (.dev, .test or nothing).
+      - run:
+          name: Deploy
+          command: |
+              # Read app version/id from package.json/viewar-config
+              APP_VERSION="$(cat package.json | npx json version)"
+              APP_ID="$((cat viewar-config.json || cat .viewar-config) | npx json appId)"
+              # Login
+              echo $USER_PASSWORD | npx @viewar/cli login $USER_NAME
+              # Deploy
+              npx @viewar/cli deploy $APP_ID.<< parameters.stage >> $APP_VERSION
+  # Production deployment (to com.viewar.appname).
   deploy:
     docker:
       - image: circleci/node:13
-    parameters:
-      stage:
-        default: ""
-        description: The stage where this deployment goes to. Must be one of ".dev", ".test", "".
-        type: enum
-        enum: [".dev", ".test", ""]
     steps:
       - checkout
       - cached_npm_install
@@ -98,7 +108,7 @@ jobs:
               # Login
               echo $USER_PASSWORD | npx @viewar/cli login $USER_NAME
               # Deploy
-              npx @viewar/cli deploy $APP_ID<< parameters.stage >> $APP_VERSION
+              npx @viewar/cli deploy $APP_ID $APP_VERSION
 workflows:
   version: 2
   test:
@@ -110,31 +120,23 @@ workflows:
       - build:
           requires:
             - checkout-and-install
-      - bump-version:
+      - bump-version-and-deploy:
+          stage: "dev"
           requires:
             - test
             - build
           filters:
             branches:
-              only: 
-                - develop
-                - test
-      - deploy:
-          stage: ".dev"
-          requires:
-            - bump-version
-          filters:
-            branches:
               only: develop
-      - deploy:
-          stage: ".test"
+      - bump-version-and-deploy:
+          stage: "test"
           requires:
-            - bump-version
+            - test
+            - build
           filters:
             branches:
               only: test
       - deploy:
-          stage: ""
           requires:
             - test
             - build
