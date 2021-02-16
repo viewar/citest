@@ -67,6 +67,7 @@ jobs:
         enum: ["dev", "test"]
     steps:
       - checkout
+      - cached_npm_install
       - run:
           name: Patch version & create version commit
           command: |
