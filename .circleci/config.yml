@@ -116,7 +116,9 @@ workflows:
             - build
           filters:
             branches:
-              only: develop
+              only: 
+                - develop
+                - test
       - deploy:
           stage: ".dev"
           requires:
