@@ -93,23 +93,11 @@ jobs:
               echo $USER_PASSWORD | npx @viewar/cli login $USER_NAME
               # Deploy
               npx @viewar/cli deploy $APP_ID.<< parameters.stage >> $APP_VERSION
-  # Production deployment (to com.viewar.appname).
-  deploy:
-    docker:
-      - image: circleci/node:13
-    steps:
-      - checkout
-      - cached_npm_install
       - run:
-          name: Deploy
+          name: Notify slack
           command: |
-              # Read app version/id from package.json/viewar-config
-              APP_VERSION="$(cat package.json | npx json version)"
-              APP_ID="$((cat viewar-config.json || cat .viewar-config) | npx json appId)"
-              # Login
-              echo $USER_PASSWORD | npx @viewar/cli login $USER_NAME
-              # Deploy
-              npx @viewar/cli deploy $APP_ID $APP_VERSION
+            curl -X POST -H 'Content-type: application/json' --data '{"text": "*$APP_ID*: Successfully deployed new << parameters.stage >> version _$APP_VERSION_ to `$APP_ID.<< parameters.stage >>`."}' https://hooks.slack.com/services/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
+  # Production deployment (to com.viewar.appname).
 workflows:
   version: 2
   test:
@@ -131,13 +119,6 @@ workflows:
               only: develop
       - bump-version-and-deploy:
           stage: "test"
-          requires:
-            - test
-            - build
-          filters:
-            branches:
-              only: test
-      - deploy:
           requires:
             - test
             - build
