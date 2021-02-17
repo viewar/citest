@@ -96,7 +96,7 @@ jobs:
       - run:
           name: Notify slack
           command: |
-            curl -X POST -H 'Content-type: application/json' --data '{"text": "*$APP_ID*: Successfully deployed new << parameters.stage >> version _$APP_VERSION_ to `$APP_ID.<< parameters.stage >>`."}' https://hooks.slack.com/services/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
+            curl -X POST -H 'Content-type: application/json' --data '{"text": "*$APP_ID*: Successfully deployed new << parameters.stage >> version _$APP_VERSION_ to `$APP_ID.<< parameters.stage >>`."}' $SLACK_WEBHOOK
   # Production deployment (to com.viewar.appname).
 workflows:
   version: 2
