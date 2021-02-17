@@ -99,7 +99,7 @@ jobs:
             APP_VERSION="$(cat package.json | npx json version)"
             APP_ID="$((cat viewar-config.json || cat .viewar-config) | npx json appId)"
             STAGE=(<< parameters.stage >>)
-            curl -X POST -H 'Content-type: application/json' --data '{"text": "'":white_check_mark: *$APP_ID*: Successfully deployed new $STAGE version _${APP_VERSION}_ to `$APP_ID.$STAGE`."'"}' $SLACK_WEBHOOK
+            curl -X POST -H 'Content-type: application/json' --data '{"text": ":white_check_mark: *'"$APP_ID"'*: Successfully deployed new $STAGE version _$'"APP_VERSION"'_ to `'"$APP_ID"'.'"$STAGE"'`."'"}' $SLACK_WEBHOOK
   # Production deployment (to com.viewar.appname).
 workflows:
   version: 2
