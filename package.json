@@ -15,7 +15,8 @@
     "test:acceptance": "netstat -na | grep \"3000\" | grep \"LISTEN\" > /dev/null && npm run cy:run || start-server-and-test dev:all http://localhost:3000 cy:run",
     "lint": "tslint --fix --project ./tsconfig.json",
     "coverage:type": "type-coverage --cache --detail",
-    "coverage:unit": "jest --collect-coverage"
+    "coverage:unit": "jest --collect-coverage",
+    "postversion": "git push origin HEAD; git push --tags"
   },
   "author": "Karl Hofer <kh@viewar.com>",
   "license": "ISC",
