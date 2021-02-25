@@ -53,8 +53,8 @@ jobs:
       - checkout
       - cached_npm_install
       - run:
-          name: Test
-          command: npm run test
+          name: Build
+          command: npm run build
   # Bump patch version number and deploy to respective apps with postfix (com.viewar.appname.dev or com.viewar.appname.test).
   bump-version-and-deploy:
     docker:
@@ -93,23 +93,16 @@ jobs:
               echo $USER_PASSWORD | npx @viewar/cli login $USER_NAME
               # Deploy
               npx @viewar/cli deploy $APP_ID.<< parameters.stage >> $APP_VERSION
-  # Production deployment (to com.viewar.appname).
-  deploy:
-    docker:
-      - image: circleci/node:13
-    steps:
-      - checkout
-      - cached_npm_install
       - run:
-          name: Deploy
+          name: Notify slack
           command: |
-              # Read app version/id from package.json/viewar-config
+            STAGE=(<< parameters.stage >>)
+            if [ "$STAGE" = "test" ]; then
               APP_VERSION="$(cat package.json | npx json version)"
               APP_ID="$((cat viewar-config.json || cat .viewar-config) | npx json appId)"
-              # Login
-              echo $USER_PASSWORD | npx @viewar/cli login $USER_NAME
-              # Deploy
-              npx @viewar/cli deploy $APP_ID $APP_VERSION
+              STAGE=(<< parameters.stage >>)
+              curl -X POST -H 'Content-type: application/json' --data '{"text": ":white_check_mark: *'"$APP_ID"'*: Successfully deployed new '"$STAGE"' version _'"$APP_VERSION"'_ to `'"$APP_ID"'.'"$STAGE"'`."}' $SLACK_WEBHOOK
+            fi
 workflows:
   version: 2
   test:
@@ -131,13 +124,6 @@ workflows:
               only: develop
       - bump-version-and-deploy:
           stage: "test"
-          requires:
-            - test
-            - build
-          filters:
-            branches:
-              only: test
-      - deploy:
           requires:
             - test
             - build
